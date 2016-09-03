@@ -1,6 +1,6 @@
-/logs/
-/deps/
-/.eunit/
+logs/
+deps/
+.eunit/
 ebin/
 *.beam
 *#
