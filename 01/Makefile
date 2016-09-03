@@ -17,7 +17,7 @@ clean:
 eunit:
 	$(REBAR) eunit skip_deps=true
 
-test:
+test: compile
 	$(REBAR) eunit ct skip_deps=true
 
 shell:
