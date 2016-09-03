@@ -34,6 +34,6 @@ end_per_suite(_Config) ->
     ok.
 
 find_sum1(_Config) ->
-    ?assertError(23, ouvain_t01:find_sum([3, 5], 10)),
+    ?assertMatch(23, ouvain_t01:find_sum([3, 5], 10)),
     ok.
 
