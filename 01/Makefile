@@ -14,8 +14,11 @@ deps:
 clean:
 	$(REBAR) clean
 
-test:
+eunit:
 	$(REBAR) eunit skip_deps=true
+
+test:
+	$(REBAR) eunit ct skip_deps=true
 
 shell:
 	erl -pz ebin
