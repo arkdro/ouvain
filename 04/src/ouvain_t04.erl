@@ -7,6 +7,15 @@
 t() ->
     true.
 
+find(N) ->
+    Divisor = find_divisor(N),
+    case is_palindrome(N, Divisor) of
+        true ->
+            N;
+        false ->
+            find()
+    end.
+
 is_palindrome(N, _Divisor) when N >= 0, N < 10 ->
     true;
 is_palindrome(N, Divisor) ->
