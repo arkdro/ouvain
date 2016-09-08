@@ -1,8 +1,19 @@
 -module(ouvain_t04).
 
 -export([
+         find/1,
          is_palindrome/1
         ]).
+
+find(Len) ->
+    Start = get_start(Len),
+    L = [{N1 * N2, N1, N2} || N1 <- lists:seq(Start, 1, -1),
+                              N2 <- lists:seq(Start, 1, -1),
+                              is_palindrome(N1 * N2)],
+    hd(lists:reverse(lists:sort(L))).
+
+get_start(Len) ->
+    round(math:pow(10, Len)) - 1.
 
 is_palindrome(N) ->
     is_palindrome(N, []).
