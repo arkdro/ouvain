@@ -23,6 +23,7 @@ groups() ->
                 {group, read}
                ]},
      {read, [], [
+                 test_find,
                  test_palindrome
                 ]}
     ].
@@ -42,5 +43,10 @@ test_palindrome(_Config) ->
     ?assertMatch(false, ouvain_t04:is_palindrome(123443210)),
     ?assertMatch(false, ouvain_t04:is_palindrome(10)),
     ?assertMatch(false, ouvain_t04:is_palindrome(21)),
+    ok.
+
+test_find(_) ->
+    ?assertMatch({9009, 99, 91}, ouvain_t04:find(2)),
+    ?assertMatch({906609,993,913}, ouvain_t04:find(3)),
     ok.
 
