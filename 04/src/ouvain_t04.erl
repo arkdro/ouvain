@@ -6,6 +6,7 @@
          is_palindrome/1
         ]).
 
+%% O(N^2)
 find(Len) ->
     Start = get_start(Len),
     L = [{N1 * N2, N1, N2} || N1 <- lists:seq(Start, 1, -1),
