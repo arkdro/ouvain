@@ -14,20 +14,26 @@ find(Len) ->
                               is_palindrome(N1 * N2)],
     get_biggest_result(L).
 
+%% O(N^2), but little faster
 find2(Len) ->
-    Max = get_start(Len),
     Params = params(),
-    {Digit, Deltas} = hd(Params),
-    Min = build_min(Digit, Len),
-    N1 = Max,
-    N2 = Max,
-    X = N1 * N2,
-    Acc = build_nums(X, N1, N2, Min, Max, Max, Deltas, []),
+    find2(Len, Params).
+
+find2(_, []) ->
+    not_found;
+find2(Len, [{Digit, Digits} | T]) ->
+    Min1 = get_min_n(Digit, Len),
+    Min2 = Min1,
+    Max1 = get_start(Digit, Len),
+    Max2 = Max1,
+    N1 = Max1,
+    N2 = Max2,
+    Acc = find2(N1, N2, Min1, Min2, Max1, Max2, Digits, []),
     case has_result(Acc) of
         true ->
-            stub;
+            get_biggest_result(Acc);
         false ->
-            find(Len)
+            find2(Len, T)
     end.
 
 get_biggest_result(L) ->
@@ -38,42 +44,44 @@ has_result([]) ->
 has_result([_|_]) ->
     true.
 
-%% only for 9xx
-build_nums(_X, _N1, _N2, _Min, _Max1, _Max2, [], Acc) ->
+find2(_N1, _N2, _Min1, _Min2, _Max1, _Max2, [], _Acc) ->
+    error(should_not_happen);
+find2(N1, N2, Min1, Min2, Max1, Max2, [{D1, _} | _] = Digits, Acc)
+  when N1 < Min1 ->
+    N1_2 = get_initial_num(Max1, D1),
+    N2_2 = get_next_num(N2),
+    find2(N1_2, N2_2, Min1, Min2, Max1, Max2, Digits, Acc);
+find2(_, N2, _, Min2, _, _, [_], Acc) when N2 < Min2 ->
     Acc;
-build_nums(X, N1, N2, Min, Max1, Max2, [{D1, D2} | T] = Deltas, Acc) ->
-    case too_small(X, Min) of
-        true ->
-            N1_2 = Max1,
-            N2_2 = N2 - D2,
-            X2 = N1_2 * N2_2,
-            case too_small(X2, Min) of
-                true ->
-                    build_nums(Max1 * Max2, Min, Max1, Max2, Max1, Max2, T, Acc);
-                false ->
-                    X2 = N1_2 * N2_2,
-                    build_nums(X2, N1_2, N2_2, Min, Max1, Max2, Deltas, Acc)
-            end;
-        false ->
-            Acc2 = add_if_palindrome(X, Acc),
-            N1_2 = N1 - D1,
-            X2 = N1_2 * N2,
-            build_nums(X2, N1_2, N2, Min, Max1, Max2, Deltas, Acc2)
-    end.
+find2(_, N2, Min1, Min2, Max1, Max2, [_ | T], Acc)
+  when N2 < Min2 ->
+    {D1, D2} = get_next_digits(T),
+    Init1 = get_initial_num(Max1, D1),
+    Init2 = get_initial_num(Max2, D2),
+    find2(Init1, Init2, Min1, Min2, Max1, Max2, T, Acc);
+find2(N1, N2, Min1, Min2, Max1, Max2, Digits, Acc) ->
+    X = N1 * N2,
+    Acc2 = add_if_palindrome(X, N1, N2, Acc),
+    N1_2 = get_next_num(N1),
+    find2(N1_2, N2, Min1, Min2, Max1, Max2, Digits, Acc2).
 
-build_min(Digit, Len) ->
-    round(Digit * math:pow(10, 2 * Len - 1)).
+get_next_digits([Digits | _]) ->
+    Digits.
 
-add_if_palindrome(X, Acc) ->
+get_initial_num(Max, D) ->
+    Rem = Max rem 10,
+    Max - Rem + D.
+
+get_next_num(N) ->
+    N - 10.
+
+add_if_palindrome(X, N1, N2, Acc) ->
     case is_palindrome(X) of
         true ->
-            [X | Acc];
+            [{X, N1, N2} | Acc];
         false ->
             Acc
     end.
-
-too_small(N, Min) ->
-    N < Min.
 
 params() ->
     [
@@ -90,6 +98,21 @@ params() ->
 
 get_start(Len) ->
     round(math:pow(10, Len)) - 1.
+
+calc_multiplier(Len) ->
+    round(math:pow(10, Len - 1)).
+
+get_min_n(Digit, Len) ->
+    Multiplier = calc_multiplier(Len),
+    Digit * Multiplier.
+
+get_start(Digit, 1) ->
+    Digit;
+get_start(Digit, Len) ->
+    Head = get_min_n(Digit, Len),
+    Multiplier = calc_multiplier(Len),
+    Tail = Multiplier - 1,
+    Head + Tail.
 
 is_palindrome(N) ->
     is_palindrome(N, []).
