@@ -26,9 +26,10 @@ find2(Len, [{Digit, Digits} | T]) ->
     Min2 = Min1,
     Max1 = get_start(Digit, Len),
     Max2 = Max1,
-    N1 = Max1,
-    N2 = Max2,
-    Acc = find2(N1, N2, Min1, Min2, Max1, Max2, Digits, []),
+    {D1, D2} = get_next_digits(Digits),
+    Init1 = get_initial_num(Max1, D1),
+    Init2 = get_initial_num(Max2, D2),
+    Acc = find2(Init1, Init2, Min1, Min2, Max1, Max2, Digits, []),
     case has_result(Acc) of
         true ->
             get_biggest_result(Acc);
