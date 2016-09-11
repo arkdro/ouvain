@@ -12,7 +12,7 @@ find(Len) ->
     L = [{N1 * N2, N1, N2} || N1 <- lists:seq(Start, 1, -1),
                               N2 <- lists:seq(Start, 1, -1),
                               is_palindrome(N1 * N2)],
-    hd(lists:reverse(lists:sort(L))).
+    get_biggest_result(L).
 
 find2(Len) ->
     Max = get_start(Len),
@@ -29,6 +29,9 @@ find2(Len) ->
         false ->
             find(Len)
     end.
+
+get_biggest_result(L) ->
+    hd(lists:reverse(lists:sort(L))).
 
 has_result([]) ->
     false;
