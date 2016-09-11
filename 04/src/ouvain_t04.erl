@@ -146,5 +146,17 @@ is_palindrom_test() ->
     ?assertMatch(false, compare([2,1])),
     ok.
 
+get_start_test() ->
+    ?assertMatch(999, get_start(9, 3)),
+    ?assertMatch(599, get_start(5, 3)),
+    ?assertMatch(199, get_start(1, 3)),
+    ?assertMatch(99, get_start(9, 2)),
+    ?assertMatch(59, get_start(5, 2)),
+    ?assertMatch(19, get_start(1, 2)),
+    ?assertMatch(9, get_start(9, 1)),
+    ?assertMatch(5, get_start(5, 1)),
+    ?assertMatch(1, get_start(1, 1)),
+    ok.
+
 -endif.
 
