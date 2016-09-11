@@ -6,7 +6,7 @@
          is_palindrome/1
         ]).
 
-%% O(N^2)
+%% O(Len^3)
 find(Len) ->
     Start = get_start(Len),
     L = [{N1 * N2, N1, N2} || N1 <- lists:seq(Start, 1, -1),
@@ -14,7 +14,7 @@ find(Len) ->
                               is_palindrome(N1 * N2)],
     get_biggest_result(L).
 
-%% O(N^2), but little faster
+%% O(Len^3), but little faster
 find2(Len) ->
     Params = params(),
     find2(Len, Params).
