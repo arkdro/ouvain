@@ -5,8 +5,13 @@
          find/2
         ]).
 
+%% find/1, find/2 - SLOW!!!
+-spec find(pos_integer(), pos_integer()) -> pos_integer().
+
 find(Begin, End) ->
     find(lists:seq(Begin, End)).
+
+-spec find([pos_integer()]) -> pos_integer().
 
 find(Numbers) ->
     find_priv(Numbers, Numbers).
