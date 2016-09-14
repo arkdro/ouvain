@@ -23,6 +23,7 @@ groups() ->
                 {group, read}
                ]},
      {read, [], [
+                 test2,
                  test1
                 ]}
     ].
@@ -35,5 +36,10 @@ end_per_suite(_Config) ->
 
 test1(_Config) ->
     ?assertMatch(2520, ouvain_t05:find(1, 10)),
+    ok.
+
+test2(_Config) ->
+    ?assertMatch(2520, ouvain_t05:find2(1, 10)),
+    ?assertMatch(232792560, ouvain_t05:find2(1, 20)),
     ok.
 

@@ -119,5 +119,12 @@ find_index_of_min_test() ->
     ?assertMatch({all_equal, 3}, find_index_of_min([3, 3, 3, 3, 3])),
     ok.
 
+get_next_row_test() ->
+    ?assertMatch(not_updated, get_next_row(2, [1, 1])),
+    ?assertMatch(done, get_next_row(2, [2, 2])),
+    ?assertMatch(not_updated, get_next_row(2, [3, 3])),
+    ?assertMatch({updated, [3, 1]}, get_next_row(2, [2, 3])),
+    ok.
+
 -endif.
 
