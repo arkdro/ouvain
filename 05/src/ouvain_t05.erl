@@ -42,4 +42,20 @@ add_min(Idx, Orig, Numbers) ->
     H2 = H + N,
     L1 ++ [H2 | T].
 
+%% ------------------------------------------------------------------
+%% eunit
+%% ------------------------------------------------------------------
+
+-ifdef(TEST).
+-include_lib("eunit/include/eunit.hrl").
+
+find_index_of_min_test() ->
+    ?assertMatch(1, find_index_of_min([1])),
+    ?assertMatch(1, find_index_of_min([1, 2, 3, 4, 3, 2, 1])),
+    ?assertMatch(5, find_index_of_min([3, 4, 3, 2, 1])),
+    ?assertMatch(4, find_index_of_min([3, 4, 3, 1, 1])),
+    ?assertMatch({all_equal, 3}, find_index_of_min([3, 3, 3, 3, 3])),
+    ok.
+
+-endif.
 
