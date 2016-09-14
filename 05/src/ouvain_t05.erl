@@ -9,15 +9,15 @@ find(Begin, End) ->
     find(lists:seq(Begin, End)).
 
 find(Numbers) ->
-    find2(Numbers, Numbers).
+    find_priv(Numbers, Numbers).
 
-find2(Orig, Numbers) ->
+find_priv(Orig, Numbers) ->
     case find_index_of_min(Numbers) of
         {all_equal, N} ->
             N;
         Idx ->
             Numbers2 = add_min(Idx, Orig, Numbers),
-            find2(Orig, Numbers2)
+            find_priv(Orig, Numbers2)
     end.
 
 find_index_of_min(L) ->
