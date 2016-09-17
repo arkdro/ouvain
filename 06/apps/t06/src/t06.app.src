@@ -1,0 +1,14 @@
+{application, t06,
+ [
+  {description, "stub app file"},
+  {vsn, "0.0.1"},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib,
+                  cowboy,
+                  exml
+                 ]},
+  {mod, { t06_app, []}},
+  {env, []}
+ ]}.
