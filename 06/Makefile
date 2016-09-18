@@ -29,6 +29,9 @@ xref: compile
 ct: compile
 	$(REBAR) ct skip_deps=true
 
+rel: compile
+	$(REBAR) generate
+
 dia:
 	dialyzer --src -r src
 
