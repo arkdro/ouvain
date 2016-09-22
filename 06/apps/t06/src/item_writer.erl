@@ -63,10 +63,15 @@ code_change(_OldVsn, State, _Extra) ->
 %%%===================================================================
 
 init() ->
-    Name = application:get_env(t06, output, "output.csv"),
+    Name = build_name(),
     {ok, Fd} = file:open(Name, [write]),
     csv_gen:row(Fd, ["GTIN", "NAME", "DESC", "COMPANY"]),
     Fd.
+
+build_name() ->
+    Name = application:get_env(t06, output, "output.csv"),
+    Dir = code:priv_dir(t06),
+    filename:join([Dir, Name]).
 
 store_priv(Fd, Gtin, Name, Desc, Company) ->
     Desc2 = fix_text_field(Desc),
