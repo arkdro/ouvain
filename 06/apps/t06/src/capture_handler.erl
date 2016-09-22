@@ -49,6 +49,7 @@ create_paste(Req, State) ->
     Res1 = cowboy_req:body(Req),
     lager:error("res1: ~p~n", [Res1]),
     {ok, Paste, Req3} = Res1,
+    process_data(Paste),
     ok = file:write_file(full_path(PasteID), Paste),
     case cowboy_req:method(Req3) of
         {<<"POST">>, Req4} ->
@@ -130,4 +131,73 @@ escape_html_char($<) -> <<"&lt;">>;
 escape_html_char($>) -> <<"&gt;">>;
 escape_html_char($&) -> <<"&amp;">>;
 escape_html_char(C) -> <<C>>.
+
+process_data(Data) ->
+    {ok, E1} = exml:parse(Data),
+    lager:error("el: ~p~n", [E1]),
+    Vals = get_base_children(E1),
+    case is_valid(Vals) of
+        true ->
+            store_item(Vals);
+        false ->
+            {error, invalid_item}
+    end.
+
+is_valid(Vals) ->
+    case find_gtin(Vals) of
+        undefined ->
+            false;
+        _ ->
+            case find_name(Vals) of
+                undefined ->
+                    false;
+                _ ->
+                    true
+            end
+    end.
+
+get_base_children(E) ->
+    Path = build_xml_path(),
+    E2 = exml_query:path(E, Path),
+    exml_query:paths(E2, [{element, <<"value">>}]).
+
+build_xml_path() ->
+    Items = [<<"S:Body">>,
+            <<"ns2:GetItemByGTINResponse">>,
+            <<"ns2:GS46Item">>,
+            <<"DataRecord">>,
+            <<"record">>,
+            <<"BaseAttributeValues">>],
+    [{element, X} || X <- Items].
+
+store_item(Vals) ->
+    Gtin = find_gtin(Vals),
+    Name = find_name(Vals),
+    Desc = find_desc(Vals),
+    Company = find_company(Vals),
+    item_writer:store(Gtin, Name, Desc, Company).
+
+find_gtin(Vals) ->
+    find_item(<<"PROD_COVER_GTIN">>, Vals).
+
+find_name(Vals) ->
+    find_item(<<"PROD_NAME">>, Vals).
+
+find_desc(Vals) ->
+    find_item(<<"PROD_DESC">>, Vals).
+
+find_company(Vals) ->
+    find_item(<<"BRAND_OWNER_NAME">>, Vals).
+
+find_item(Key, L) ->
+    L2 = [Item || Item <- L, is_valid_item(Item, Key)],
+    case L2 of
+        [] ->
+            undefined;
+        [Val | _] ->
+            Val
+    end.
+
+is_valid_item(Item, Key) ->
+    exml_query:attr(Item, <<"baseAttrId">>) =:= Key.
 
