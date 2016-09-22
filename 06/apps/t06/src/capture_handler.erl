@@ -195,7 +195,7 @@ find_item(Key, L) ->
         [] ->
             undefined;
         [Val | _] ->
-            Val
+            exml_query:attr(Val, <<"value">>)
     end.
 
 is_valid_item(Item, Key) ->
