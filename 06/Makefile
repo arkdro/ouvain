@@ -11,8 +11,11 @@ compile:
 deps:
 	$(REBAR) get-deps
 
-clean:
+distclean:
 	$(REBAR) clean
+
+clean:
+	$(REBAR) clean skip_deps=true
 
 eunit:
 	$(REBAR) eunit skip_deps=true
