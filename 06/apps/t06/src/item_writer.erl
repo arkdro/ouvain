@@ -46,8 +46,8 @@ handle_cast(_Msg, State) ->
     {noreply, State}.
 
 handle_info(init, #state{fd = undefined} = State) ->
-    init(),
-    {noreply, State};
+    Fd = init(),
+    {noreply, State#state{fd = Fd}};
 handle_info(_Info, State) ->
     {noreply, State}.
 
@@ -62,5 +62,9 @@ code_change(_OldVsn, State, _Extra) ->
 %%%===================================================================
 
 init() ->
-    ok.
+    Name = application:get_env(t06, output, "output.csv"),
+    {ok, Fd} = file:open(Name, [write]),
+    csv_gen:row(Fd, ["GTIN", "NAME", "DESC", "COMPANY"]),
+    Fd.
+
 
