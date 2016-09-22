@@ -77,6 +77,7 @@ store_priv(Fd, Gtin, Name, Desc, Company) ->
     Desc2 = fix_text_field(Desc),
     Company2 = fix_text_field(Company),
     Row = [Gtin, Name, Desc2, Company2],
+    lager:debug("row: ~p~n", [Row]),
     csv_gen:row(Fd, Row).
 
 fix_text_field(undefined) ->

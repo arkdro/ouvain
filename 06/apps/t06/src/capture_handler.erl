@@ -43,11 +43,9 @@ resource_exists(Req, _State) ->
     end.
 
 create_paste(Req, State) ->
-    lager:error("req: ~p~n", [Req]),
-    lager:error("state: ~p~n", [State]),
+    lager:debug("req: ~p~n", [Req]),
     PasteID = new_paste_id(),
     Res1 = cowboy_req:body(Req),
-    lager:error("res1: ~p~n", [Res1]),
     {ok, Paste, Req3} = Res1,
     process_data(Paste),
     ok = file:write_file(full_path(PasteID), Paste),
@@ -78,7 +76,6 @@ read_file(Name) ->
 
 full_path(Name) ->
     Dir = code:priv_dir(t06),
-    lager:error("dir: ~p~n", [Dir]),
     filename:join([Dir, Name]).
 
 file_exists(Name) ->
@@ -134,7 +131,7 @@ escape_html_char(C) -> <<C>>.
 
 process_data(Data) ->
     {ok, E1} = exml:parse(Data),
-    lager:error("el: ~p~n", [E1]),
+    lager:debug("el: ~p~n", [E1]),
     Vals = get_base_children(E1),
     case is_valid(Vals) of
         true ->
