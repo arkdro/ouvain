@@ -76,7 +76,8 @@ build_name() ->
 store_priv(Fd, Gtin, Name, Desc, Company) ->
     Desc2 = fix_text_field(Desc),
     Company2 = fix_text_field(Company),
-    csv_gen:row(Fd, [Gtin, Name, Desc2, Company2]).
+    Row = [Gtin, Name, Desc2, Company2],
+    csv_gen:row(Fd, Row).
 
 fix_text_field(undefined) ->
     "";
