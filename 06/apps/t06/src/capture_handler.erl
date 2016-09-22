@@ -6,7 +6,7 @@
 -export([content_types_accepted/2]).
 
 %% Custom callbacks.
--export([create_paste/2]).
+-export([capture/2]).
 
 init(_Transport, _Req, []) ->
     % For the random number generator:
@@ -18,10 +18,10 @@ allowed_methods(Req, State) ->
     {[<<"POST">>], Req, State}.
 
 content_types_accepted(Req, State) ->
-    {[{{<<"application">>, <<"x-www-form-urlencoded">>, []}, create_paste}],
+    {[{{<<"application">>, <<"x-www-form-urlencoded">>, []}, capture}],
         Req, State}.
 
-create_paste(Req, State) ->
+capture(Req, State) ->
     lager:debug("req: ~p~n", [Req]),
     Res1 = cowboy_req:body(Req),
     {ok, Paste, Req3} = Res1,
