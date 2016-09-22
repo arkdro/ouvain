@@ -40,7 +40,8 @@ handle_call(_Request, _From, State) ->
     Reply = ok,
     {reply, Reply, State}.
 
-handle_cast({store, Gtin, Name, Desc, Company}, State) ->
+handle_cast({store, Gtin, Name, Desc, Company}, #state{fd = Fd} = State) ->
+    store_priv(Fd, Gtin, Name, Desc, Company),
     {noreply, State};
 handle_cast(_Msg, State) ->
     {noreply, State}.
@@ -67,4 +68,13 @@ init() ->
     csv_gen:row(Fd, ["GTIN", "NAME", "DESC", "COMPANY"]),
     Fd.
 
+store_priv(Fd, Gtin, Name, Desc, Company) ->
+    Desc2 = fix_text_field(Desc),
+    Company2 = fix_text_field(Company),
+    csv_gen:row(Fd, [Gtin, Name, Desc2, Company2]).
+
+fix_text_field(undefined) ->
+    "";
+fix_text_field(Str) ->
+    Str.
 
