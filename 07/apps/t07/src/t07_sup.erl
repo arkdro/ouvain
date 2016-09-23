@@ -23,5 +23,10 @@ start_link() ->
 %% ===================================================================
 
 init([]) ->
-    {ok, { {one_for_one, 5, 10}, []} }.
+    Num_server = ?CHILD(num_server, worker),
+    Task_server = ?CHILD(task_server, worker),
+    N = application:get_env(t07, max_workers, 1),
+    Workers = [?CHILD({worker, X}, worker) || X <- lists:seq(1, N)],
+    Children = [Num_server, Task_server | Workers],
+    {ok, { {one_for_one, 5, 10}, Children} }.
 
