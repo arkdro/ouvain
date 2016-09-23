@@ -1,0 +1,12 @@
+{application, t07,
+ [
+  {description, "stub app file"},
+  {vsn, "0.0.1"},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib
+                 ]},
+  {mod, { t07_app, []}},
+  {env, [{max_workers, 10}]}
+ ]}.
