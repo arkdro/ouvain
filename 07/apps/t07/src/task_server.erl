@@ -21,7 +21,6 @@
           finished = not_finished :: not_finished | finished,
           longest_num :: pos_integer(),
           longest_len :: pos_integer(),
-          cur = 1 :: pos_integer(),
           max :: pos_integer()
          }).
 
