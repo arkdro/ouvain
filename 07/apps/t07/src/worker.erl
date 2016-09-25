@@ -70,11 +70,16 @@ calc_length(Number) ->
 calc_length(1, Len) ->
     Len;
 calc_length(Number, Len) ->
-    case is_even(Number) of
-        true ->
-            calc_length(Number div 2, Len + 1);
-        false ->
-            calc_length(3 * Number + 1, Len + 1)
+    case num_server:get_cached_len(Number) of
+        {ok, Cached_len} ->
+            Len + Cached_len - 1;
+        error ->
+            case is_even(Number) of
+                true ->
+                    calc_length(Number div 2, Len + 1);
+                false ->
+                    calc_length(3 * Number + 1, Len + 1)
+            end
     end.
 
 is_even(Number) ->

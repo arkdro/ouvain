@@ -6,6 +6,7 @@
 
 %% API
 -export([
+         get_cached_len/1,
          store/2,
          start_link/0
         ]).
@@ -22,6 +23,14 @@
 %%%===================================================================
 %%% API
 %%%===================================================================
+
+get_cached_len(Number) ->
+    case ets:lookup(?TAB, Number) of
+        [{Number, Len}] ->
+            {ok, Len};
+        [] ->
+            error
+    end.
 
 store(Start, Len) ->
     gen_server:cast(?SERVER, {store, Start, Len}).
