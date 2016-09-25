@@ -26,6 +26,7 @@ start_link() ->
 
 init([]) ->
     send_signal(),
+    lager:debug("~p started", [?MODULE]),
     {ok, #state{}}.
 
 handle_call(_Request, _From, State) ->
@@ -59,6 +60,7 @@ work() ->
         no_more_numbers ->
             skip;
         Number ->
+            lager:debug("get_number, n=~p", [Number]),
             Len = calc_length(Number),
             task_server:finish_number(Number, Len),
             send_signal()
