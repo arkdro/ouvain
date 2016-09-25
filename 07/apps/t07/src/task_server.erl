@@ -66,6 +66,10 @@ handle_cast({finish_number, Number, Length, Pid}, State) ->
 handle_cast(_Msg, State) ->
     {noreply, State}.
 
+handle_info(check_state, State) ->
+    State2 = check_and_update_finish(State),
+    log_finish(State2),
+    {noreply, State2};
 handle_info(populate_tables, #state{max = Max} = State) ->
     populate_tables(Max),
     {noreply, State};
@@ -89,6 +93,7 @@ code_change(_OldVsn, State, _Extra) ->
 get_next_number(Ref) ->
     case get_next_number() of
         no_more_numbers = Err ->
+            prepare_check_state(),
             Err;
         N ->
             mark_number_busy(N, Ref),
@@ -107,6 +112,15 @@ update_state(Number, Length, State) ->
     State#state{longest_num = Number,
                 longest_len = Length,
                 finished = Finished}.
+
+check_and_update_finish(State) ->
+    Finished = get_finish_flag(),
+    State#state{finished = Finished}.
+
+log_finish(#state{longest_num = N, longest_len = L, finished = finished}) ->
+    lager:info("finished, n=~p, len=~p~n", [N, L]);
+log_finish(_) ->
+    ok.
 
 get_finish_flag() ->
     S1 = ets:info(busy_number_tab(), size),
@@ -209,4 +223,7 @@ create_tables() ->
 populate_tables(Max) ->
     [ets:insert(free_number_tab(), {X}) || X <- lists:seq(1, Max)],
     ok.
+
+prepare_check_state() ->
+    self() ! check_state.
 
