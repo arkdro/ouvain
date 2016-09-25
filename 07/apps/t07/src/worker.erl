@@ -102,8 +102,26 @@ is_even_test() ->
     ?assertMatch(false, is_even(11)),
     ok.
 
-calc_length_test() ->
+calc_length1_test() ->
+    meck:new(num_server),
+    meck:expect(num_server, get_cached_len, fun(_) -> error end),
     ?assertMatch(10, calc_length(13)),
+    meck:unload(num_server),
+    ok.
+
+calc_length2_test() ->
+    meck:new(num_server),
+    meck:expect(num_server, get_cached_len,
+                fun
+                    (5) -> {ok, 6};
+                    (16) -> {ok, 5};
+                    (8) -> {ok, 4};
+                    (4) -> {ok, 3};
+                    (2) -> {ok, 2};
+                    (_) -> error
+                end),
+    ?assertMatch(10, calc_length(13)),
+    meck:unload(num_server),
     ok.
 
 -endif.
