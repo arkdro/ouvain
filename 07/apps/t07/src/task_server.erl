@@ -87,15 +87,26 @@ code_change(_OldVsn, State, _Extra) ->
 %%%===================================================================
 
 get_next_number(Ref) ->
-    N = get_next_number(),
-    mark_number_busy(N, Ref),
-    N.
+    case get_next_number() of
+        no_more_numbers = Err ->
+            Err;
+        N ->
+            mark_number_busy(N, Ref),
+            N
+    end.
 
+store_result(Number, Length, #state{longest_len = undefined} = State) ->
+    update_state(Number, Length, State);
 store_result(Number, Length, #state{longest_len = L} = State) when Length > L ->
-    Finished = get_finish_flag(),
-    State#state{longest_num = Number, longest_len = Length, finished = Finished};
+    update_state(Number, Length, State);
 store_result(_, _, State) ->
     State.
+
+update_state(Number, Length, State) ->
+    Finished = get_finish_flag(),
+    State#state{longest_num = Number,
+                longest_len = Length,
+                finished = Finished}.
 
 get_finish_flag() ->
     S1 = ets:info(busy_number_tab(), size),
