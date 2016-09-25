@@ -44,6 +44,7 @@ start_link() ->
 
 init([]) ->
     ets:new(?TAB, [named_table]),
+    lager:debug("~p started", [?MODULE]),
     {ok, #state{}}.
 
 handle_call(_Request, _From, State) ->
@@ -52,6 +53,7 @@ handle_call(_Request, _From, State) ->
 
 handle_cast({store, Start, Len}, State) ->
     store_item(Start, Len),
+    lager:debug("stored, n=~p, len=~p", [Start, Len]),
     {noreply, State};
 handle_cast(_Msg, State) ->
     {noreply, State}.
