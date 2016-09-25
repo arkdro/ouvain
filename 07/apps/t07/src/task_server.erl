@@ -44,6 +44,7 @@ start_link() ->
 init([]) ->
     Max = application:get_env(t07, max_number, 999999),
     create_tables(),
+    self() ! populate_tables,
     lager:debug("~p started", [?MODULE]),
     {ok, #state{max = Max}}.
 
@@ -65,6 +66,9 @@ handle_cast({finish_number, Number, Length, Pid}, State) ->
 handle_cast(_Msg, State) ->
     {noreply, State}.
 
+handle_info(populate_tables, #state{max = Max} = State) ->
+    populate_tables(Max),
+    {noreply, State};
 handle_info({'DOWN', Ref, _, Pid, _}, State) ->
     mark_number_free(Ref, Pid),
     lager:debug("worker down, pid=~p, ref=~p", [Pid, Ref]),
@@ -190,4 +194,8 @@ create_tables() ->
     ets:new(monitor_to_number_tab(), [named_table]),
     ets:new(busy_number_tab(), [named_table]),
     ets:new(free_number_tab(), [named_table, ordered_set]).
+
+populate_tables(Max) ->
+    [ets:insert(free_number_tab(), {X}) || X <- lists:seq(1, Max)],
+    ok.
 
