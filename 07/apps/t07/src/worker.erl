@@ -80,4 +80,26 @@ calc_length(Number, Len) ->
 is_even(Number) ->
     (Number rem 2) =:= 0.
 
+%% ------------------------------------------------------------------
+%% eunit
+%% ------------------------------------------------------------------
+
+-ifdef(TEST).
+-include_lib("eunit/include/eunit.hrl").
+
+is_even_test() ->
+    ?assertMatch(true, is_even(0)),
+    ?assertMatch(true, is_even(2)),
+    ?assertMatch(true, is_even(10)),
+    ?assertMatch(true, is_even(12)),
+    ?assertMatch(false, is_even(1)),
+    ?assertMatch(false, is_even(3)),
+    ?assertMatch(false, is_even(11)),
+    ok.
+
+calc_length_test() ->
+    ?assertMatch(10, calc_length(13)),
+    ok.
+
+-endif.
 
