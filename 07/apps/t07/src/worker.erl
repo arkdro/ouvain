@@ -37,7 +37,6 @@ handle_cast(_Msg, State) ->
 
 handle_info(work, State) ->
     work(),
-    send_signal(),
     {noreply, State};
 handle_info(_Info, State) ->
     {noreply, State}.
@@ -56,10 +55,29 @@ send_signal() ->
     self() ! work.
 
 work() ->
-    Number = task_server:get_number(),
-    Len = calc_length(Number),
-    task_server:finish_number(Number, Len).
+    case task_server:get_number() of
+        no_more_numbers ->
+            skip;
+        Number ->
+            Len = calc_length(Number),
+            task_server:finish_number(Number, Len),
+            send_signal()
+    end.
 
 calc_length(Number) ->
-    erlang:error(not_implemented).
+    calc_length(Number, 1).
+
+calc_length(1, Len) ->
+    Len;
+calc_length(Number, Len) ->
+    case is_even(Number) of
+        true ->
+            calc_length(Number div 2, Len + 1);
+        false ->
+            calc_length(3 * Number + 1, Len + 1)
+    end.
+
+is_even(Number) ->
+    (Number rem 2) =:= 0.
+
 
