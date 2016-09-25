@@ -44,11 +44,13 @@ start_link() ->
 init([]) ->
     Max = application:get_env(t07, max_number, 999999),
     create_tables(),
+    lager:debug("~p started", [?MODULE]),
     {ok, #state{max = Max}}.
 
 handle_call({get_number, Pid}, _From, State) ->
     Ref = activate_monitor(Pid),
     Number = get_next_number(Ref),
+    lager:debug("get_number, pid=~p, ref=~p, n=~p", [Pid, Ref, Number]),
     {reply, Number, State};
 handle_call(_Request, _From, State) ->
     Reply = ok,
@@ -58,12 +60,14 @@ handle_cast({finish_number, Number, Length, Pid}, State) ->
     update_cache(Number, Length),
     mark_number_done(Number, Pid),
     State2 = store_result(Number, Length, State),
+    lager:info("finish_number, pid=~p, n=~p, len=~p", [Pid, Number, Length]),
     {noreply, State2};
 handle_cast(_Msg, State) ->
     {noreply, State}.
 
 handle_info({'DOWN', Ref, _, Pid, _}, State) ->
     mark_number_free(Ref, Pid),
+    lager:debug("worker down, pid=~p, ref=~p", [Pid, Ref]),
     {noreply, State};
 handle_info(_Info, State) ->
     {noreply, State}.
