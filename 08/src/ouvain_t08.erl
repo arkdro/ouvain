@@ -67,6 +67,7 @@ validate_test() ->
     ?assertMatch(1, calc_check_digit("", 1, 3, 9)),
     ?assertMatch(5, calc_check_digit("", 1, 3, 5)),
     ?assertMatch(6, calc_check_digit("1", 3, 1, 11)),
+    ?assertMatch(3, calc_check_digit(lists:reverse("629104150021"))),
     ok.
 
 -endif.
