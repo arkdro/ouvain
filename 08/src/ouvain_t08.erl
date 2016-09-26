@@ -39,7 +39,8 @@ calc_check_digit(Str) ->
 calc_check_digit([], _, _, Acc) ->
     (10 - (Acc rem 10)) rem 10;
 calc_check_digit([H | T], Mult, Next, Acc) ->
-    Acc2 = Acc + H * Mult,
+    Num = list_to_integer([H]),
+    Acc2 = Acc + Num * Mult,
     calc_check_digit(T, Next, Mult, Acc2).
 
 validate_length(Str) ->
