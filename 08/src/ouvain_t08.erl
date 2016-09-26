@@ -62,11 +62,11 @@ make_string(Data) ->
 -include_lib("eunit/include/eunit.hrl").
 
 validate_test() ->
-    ?assertMatch({error, invalid_length}, validate(<<>>)),
-    ?assertMatch({error, invalid_length}, validate(<<"12341234123412341234">>)),
-    ?assertMatch({error, invalid_length}, validate("")),
-    ?assertMatch({error, invalid_length}, validate("12")),
-    %% ?assertMatch({error, wrong_check_digit}, validate("12345678901234")),
+    ?assertMatch(0, calc_check_digit("", 1, 3, 0)),
+    ?assertMatch(9, calc_check_digit("", 1, 3, 1)),
+    ?assertMatch(1, calc_check_digit("", 1, 3, 9)),
+    ?assertMatch(5, calc_check_digit("", 1, 3, 5)),
+    ?assertMatch(6, calc_check_digit("1", 3, 1, 11)),
     ok.
 
 -endif.

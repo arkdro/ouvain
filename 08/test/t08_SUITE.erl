@@ -38,5 +38,7 @@ test_validate(_Config) ->
     ?assertMatch({error, invalid_length}, ouvain_t08:validate(<<"12341234123412341234">>)),
     ?assertMatch({error, invalid_length}, ouvain_t08:validate("")),
     ?assertMatch({error, invalid_length}, ouvain_t08:validate("12")),
+    ?assertMatch({error, wrong_check_digit}, ouvain_t08:validate("12345678901234")),
+    ?assertMatch(ok, ouvain_t08:validate("12345678901231")),
     ok.
 
