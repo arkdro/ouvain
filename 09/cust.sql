@@ -38,5 +38,50 @@ begin
     order by pro.id, ass.action, ass.ts;
 end//
 
+drop procedure if exists find_wrong_owner_id;
+create procedure find_wrong_owner_id()
+begin
+    select p.id, p.current_owner_id, a.oid as should_be_owner_id
+    from product as p
+    join
+        (select product_id as pid, participant_id as oid
+        from assignment
+        where (product_id, ts, action) in
+            (select product_id, max(ts), max(action)
+            from assignment
+            group by product_id)
+        ) as a
+    on (p.id = a.pid and p.current_owner_id != a.oid);
+end//
+
+drop procedure if exists correct_owner_id;
+create procedure correct_owner_id()
+begin
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE pid, cid, oid INT;
+    DECLARE cur1 CURSOR FOR
+        select p.id, p.current_owner_id, a.oid as should_be_owner_id
+        from product as p
+        join
+            (select product_id as pid, participant_id as oid
+            from assignment
+            where (product_id, ts, action) in
+                (select product_id, max(ts), max(action)
+                from assignment
+                group by product_id)
+            ) as a
+        on (p.id = a.pid and p.current_owner_id != a.oid);
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+    OPEN cur1;
+    read_loop: LOOP
+        FETCH cur1 INTO pid, cid, oid;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+        UPDATE product SET current_owner_id = oid WHERE id = pid;
+    END LOOP;
+    CLOSE cur1;
+end//
+
 delimiter ;
 
