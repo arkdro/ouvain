@@ -1,7 +1,9 @@
 -- products
 insert into product (id, current_owner_id) values (1, 10);
 insert into product (id, current_owner_id) values (2, 10);
+-- conflicts with assignment participant id
 insert into product (id, current_owner_id) values (3, 20);
+
 insert into product (id, current_owner_id) values (4, 5);
 
 -- assignments
