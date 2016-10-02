@@ -4,7 +4,7 @@
          validate/1
         ]).
 
-validate(Gtin) ->
+validate({gtin, Gtin}) ->
     Str = make_string(Gtin),
     Validators = [
                   fun validate_length/1,

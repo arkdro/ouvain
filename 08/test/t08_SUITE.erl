@@ -34,12 +34,12 @@ end_per_suite(_Config) ->
     ok.
 
 test_validate(_Config) ->
-    ?assertMatch({error, invalid_length}, ouvain_t08:validate(<<>>)),
-    ?assertMatch({error, invalid_length}, ouvain_t08:validate(<<"12341234123412341234">>)),
-    ?assertMatch({error, invalid_length}, ouvain_t08:validate("")),
-    ?assertMatch({error, invalid_length}, ouvain_t08:validate("12")),
-    ?assertMatch({error, wrong_check_digit}, ouvain_t08:validate("12345678901234")),
-    ?assertMatch(ok, ouvain_t08:validate("12345678901231")),
-    ?assertMatch(ok, ouvain_t08:validate("06291041500213")),
+    ?assertMatch({error, invalid_length}, ouvain_t08:validate({gtin, <<>>})),
+    ?assertMatch({error, invalid_length}, ouvain_t08:validate({gtin, <<"12341234123412341234">>})),
+    ?assertMatch({error, invalid_length}, ouvain_t08:validate({gtin, ""})),
+    ?assertMatch({error, invalid_length}, ouvain_t08:validate({gtin, "12"})),
+    ?assertMatch({error, wrong_check_digit}, ouvain_t08:validate({gtin, "12345678901234"})),
+    ?assertMatch(ok, ouvain_t08:validate({gtin, "12345678901231"})),
+    ?assertMatch(ok, ouvain_t08:validate({gtin, "06291041500213"})),
     ok.
 
